@@ -13,11 +13,12 @@ int i;
 }
 
 int main(int argc, char* argv[]) { /* mpi_primosbag.c  */
-double t_inicial, t_final;
-int cont = 0, total = 0;
-int i, n;
-int meu_ranque, num_procs, inicio, dest, raiz=0, tag=1, stop=0;
-MPI_Status estado;
+    double t_inicial, t_final;
+    int cont = 0, total = 0;
+    int i, n;
+    int meu_ranque, num_procs, inicio, dest, raiz=0, tag=1, stop=0;
+    MPI_Status estado;
+
 /* Verifica o número de argumentos passados */
 	if (argc < 2) {
         printf("Entre com o valor do maior inteiro como parâmetro para o programa.\n");
@@ -39,12 +40,13 @@ MPI_Status estado;
 /* Envia pedaços com TAMANHO números para cada processo */
     if (meu_ranque == 0) { 
         for (dest=1, inicio=3; dest < num_procs && inicio < n; dest++, inicio += TAMANHO) {
-            MPI_Send(&inicio, 1, MPI_INT, dest, tag, MPI_COMM_WORLD);
+            MPI_Ssend(&inicio, 1, MPI_INT, dest, tag, MPI_COMM_WORLD);
         }
-        
+
+/* manda mensagem para finalizar processos que ficaram sem tarefa */
         int count_aux = 0;
         for (dest; dest < num_procs; dest++){
-            MPI_Send(&inicio, 1, MPI_INT, dest, 99, MPI_COMM_WORLD);
+            MPI_Ssend(&inicio, 1, MPI_INT, dest, 99, MPI_COMM_WORLD);
             count_aux++;
         }
 
@@ -59,7 +61,7 @@ MPI_Status estado;
                 stop++;
             }
 /* Envia um nvo pedaço com TAMANHO números para o mesmo processo*/
-            MPI_Send(&inicio, 1, MPI_INT, dest, tag, MPI_COMM_WORLD);
+            MPI_Ssend(&inicio, 1, MPI_INT, dest, tag, MPI_COMM_WORLD);
             inicio += TAMANHO;
         }
     }       
@@ -72,7 +74,7 @@ MPI_Status estado;
 		            if (primo(i) == 1)
                         cont++;
 /* Envia a contagem parcial para o processo mestre */
-                MPI_Send(&cont, 1, MPI_INT, raiz, tag, MPI_COMM_WORLD);
+                MPI_Ssend(&cont, 1, MPI_INT, raiz, tag, MPI_COMM_WORLD);
             } 
         } 
 /* Registra o tempo final de execução */
