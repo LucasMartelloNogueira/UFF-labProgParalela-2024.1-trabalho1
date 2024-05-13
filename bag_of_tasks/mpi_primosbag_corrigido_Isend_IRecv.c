@@ -9,7 +9,6 @@ int i;
 	for (i = 3; i < (int)(sqrt(n) + 1); i+=2) {
 			if(n%i == 0) return 0;
 	}
-    printf("%d eh primo\n", n);
 	return 1;
 }
 
